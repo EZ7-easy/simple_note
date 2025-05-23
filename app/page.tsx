@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 
-// Define types for notes
 interface Note {
   id: number;
   title: string;
@@ -18,7 +17,6 @@ export default function NotesApp() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch notes from API
   const fetchNotes = async () => {
     try {
       setIsLoading(true);
@@ -27,14 +25,13 @@ export default function NotesApp() {
       const data: Note[] = await res.json();
       setNotes(data);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to load notes. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Add a new note
   const addNote = async () => {
     if (!title.trim() || !content.trim()) {
       setError('Title and content are required');
@@ -53,28 +50,26 @@ export default function NotesApp() {
       setContent('');
       setError(null);
       await fetchNotes();
-    } catch (err) {
+    } catch {
       setError('Failed to add note. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Delete a note
   const deleteNote = async (id: number) => {
     try {
       setIsLoading(true);
       const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete note');
       await fetchNotes();
-    } catch (err) {
+    } catch {
       setError('Failed to delete note. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Fetch notes on mount
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -91,7 +86,6 @@ export default function NotesApp() {
           📝 Notes App
         </h1>
 
-        {/* Error Message */}
         {error && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -102,7 +96,6 @@ export default function NotesApp() {
           </motion.div>
         )}
 
-        {/* Note Input Form */}
         <div className="space-y-4 mb-6">
           <input
             type="text"
@@ -129,7 +122,6 @@ export default function NotesApp() {
           </button>
         </div>
 
-        {/* Notes List */}
         {isLoading && (
           <div className="text-center text-gray-500">Loading notes...</div>
         )}
