@@ -12,16 +12,17 @@ interface Note {
 
 export default function NotesApp() {
   const [notes, setNotes] = useState<Note[]>([]);
-  const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch all notes
   const fetchNotes = async () => {
     try {
       setIsLoading(true);
       const res = await fetch('/api/notes');
-      if (!res.ok) throw new Error('Failed to fetch notes');
+      if (!res.ok) throw new Error();
       const data: Note[] = await res.json();
       setNotes(data);
       setError(null);
@@ -32,6 +33,7 @@ export default function NotesApp() {
     }
   };
 
+  // Add a new note
   const addNote = async () => {
     if (!title.trim() || !content.trim()) {
       setError('Title and content are required');
@@ -45,7 +47,7 @@ export default function NotesApp() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, content }),
       });
-      if (!res.ok) throw new Error('Failed to add note');
+      if (!res.ok) throw new Error();
       setTitle('');
       setContent('');
       setError(null);
@@ -57,11 +59,12 @@ export default function NotesApp() {
     }
   };
 
+  // Delete a note by ID
   const deleteNote = async (id: number) => {
     try {
       setIsLoading(true);
       const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete note');
+      if (!res.ok) throw new Error();
       await fetchNotes();
     } catch {
       setError('Failed to delete note. Please try again.');
@@ -125,6 +128,7 @@ export default function NotesApp() {
         {isLoading && (
           <div className="text-center text-gray-500">Loading notes...</div>
         )}
+
         <AnimatePresence>
           <ul className="space-y-4">
             {notes.map((note) => (
